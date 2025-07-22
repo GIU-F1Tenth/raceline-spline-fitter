@@ -26,7 +26,7 @@ def catmull_rom_segment(p0, p1, p2, p3, t):
                   (-p0 + 3*p1 - 3*p2 + p3) * t3)
 
 
-def save_path(output_csv, x_fine, y_fine):
+def save_path(output_csv, x_fine, y_fine, boundary_left, boundary_right):
     """
     Save the generated spline points to a CSV file.
 
@@ -34,10 +34,12 @@ def save_path(output_csv, x_fine, y_fine):
         output_csv: Path to the output CSV file.
         x_fine: Array of x coordinates of the spline.
         y_fine: Array of y coordinates of the spline.
+        boundary_left: Array of left boundary values.
+        boundary_right: Array of right boundary values.
     """
     os.makedirs(os.path.dirname(output_csv), exist_ok=True)
     with open(output_csv, 'w', newline='') as csvfile:
         writer = csv.writer(csvfile)
-        writer.writerow(['x', 'y'])
-        for x, y in zip(x_fine, y_fine):
-            writer.writerow([x, y])
+        writer.writerow(['x', 'y', 'boundary_left', 'boundary_right'])
+        for x, y, bl, br in zip(x_fine, y_fine, boundary_left, boundary_right):
+            writer.writerow([x, y, bl, br])

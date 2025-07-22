@@ -17,7 +17,7 @@ def create_closed_catmull_rom_spline(points, num_points=1000):
         num_points: Number of points to generate along the spline.
 
     Returns:
-       (x_fine, y_fine): Arrays of x and y coordinates of the spline.
+       (x_fine, y_fine, boundary_left, boundary_right): Arrays of x and y coordinates of the spline.
     """
     points = np.array(points)
     n = len(points)
@@ -49,7 +49,7 @@ def create_closed_catmull_rom_spline(points, num_points=1000):
     x_fine.append(x_fine[0])
     y_fine.append(y_fine[0])
 
-    return np.array(x_fine), np.array(y_fine)
+    return np.array(x_fine), np.array(y_fine), points[:, 2], points[:, 3]
 
 
 if __name__ == "__main__":
@@ -61,7 +61,7 @@ if __name__ == "__main__":
         help='Number of points to generate along the spline.')
     arg_parser.add_argument(
         '--input_csv', type=str, required=True,
-        help='Path to the input CSV file containing control points. Format: x,y per line.'
+        help='Path to the input CSV file containing control points. Format: x,y,boundary_left,boundary_right per line.'
     )
     arg_parser.add_argument(
         '--output_csv', type=str, default=os.path.join("out", "spline_points.csv"),
@@ -79,22 +79,25 @@ if __name__ == "__main__":
     with open(args.input_csv, 'r') as csvfile:
         reader = csv.reader(csvfile)
         for row in reader:
-            if len(row) == 2:
+            if len(row) == 4:
                 try:
-                    x, y = float(row[0]), float(row[1])
-                    input_points.append([x, y])
+                    x, y, boundary_left, boundary_right = float(
+                        row[0]), float(row[1]), float(row[2]), float(row[3])
+                    input_points.append([x, y, boundary_left, boundary_right])
                 except ValueError:
                     print(f"Invalid point: {row}. Skipping.")
+            else:
+                print(f"Invalid row: {row}. Skipping.")
 
     if len(input_points) < 4:
         print("At least 4 control points are required to create a spline.")
         exit(1)
 
     # Create the closed Catmull-Rom spline
-    x_fine, y_fine = create_closed_catmull_rom_spline(
+    x_fine, y_fine, boundary_left, boundary_right = create_closed_catmull_rom_spline(
         input_points, args.num_points)
 
-    save_path(args.output_csv, x_fine, y_fine)
+    save_path(args.output_csv, x_fine, y_fine, boundary_left, boundary_right)
 
     # Plotting the spline and control points
     input_points = np.array(input_points)
