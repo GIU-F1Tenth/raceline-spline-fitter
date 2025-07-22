@@ -31,9 +31,10 @@ def convert_csv(csv_file, cleaned_csv_file):
 
 if __name__ == "__main__":
     parser = ArgumentParser(description="Convert a CSV file.")
-    parser.add_argument("csv_file", help="The input CSV file to convert.")
-    parser.add_argument("cleaned_csv_file",
-                        help="The output cleaned CSV file.")
+    parser.add_argument(
+        "--csv_file", help="The input CSV file to convert.", required=True)
+    parser.add_argument("--cleaned_csv_file",
+                        help="The output cleaned CSV file.", default=os.path.join("data", "cleaned.csv"))
     args = parser.parse_args()
 
     # Sanity checks

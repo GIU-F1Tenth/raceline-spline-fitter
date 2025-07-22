@@ -64,7 +64,7 @@ if __name__ == "__main__":
         help='Path to the input CSV file containing control points. Format: x,y per line.'
     )
     arg_parser.add_argument(
-        '--output_csv', type=str, default='out/spline_output.csv',
+        '--output_csv', type=str, default=os.path.join("out", "spline_points.csv"),
         help='Path to save the generated spline points as a CSV file.'
     )
 
