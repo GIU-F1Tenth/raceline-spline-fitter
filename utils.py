@@ -1,6 +1,8 @@
 import csv
 import os
 
+import numpy as np
+
 
 def catmull_rom_segment(p0, p1, p2, p3, t):
     """
@@ -37,6 +39,13 @@ def save_path(output_csv, x_fine, y_fine, boundary_left, boundary_right):
         boundary_left: Array of left boundary values.
         boundary_right: Array of right boundary values.
     """
+    if len(boundary_left) != len(x_fine):
+        boundary_left = np.interp(np.linspace(0, 1, len(x_fine)),
+                                  np.linspace(0, 1, len(boundary_left)),
+                                  boundary_left)
+        boundary_right = np.interp(np.linspace(0, 1, len(x_fine)),
+                                   np.linspace(0, 1, len(boundary_right)),
+                                   boundary_right)
     os.makedirs(os.path.dirname(output_csv), exist_ok=True)
     with open(output_csv, 'w', newline='') as csvfile:
         writer = csv.writer(csvfile)
